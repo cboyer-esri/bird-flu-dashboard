@@ -157,13 +157,15 @@
     .mobile-filter-btn:hover { background: #0e3850; border-color: #d46a30; }
     .mobile-filter-btn.active { background: #d46a30; color: #fff; border-color: #d46a30; }
 
-    /* Legend */
-    .legend { position: absolute; bottom: 30px; right: 14px; background: rgba(22,40,58,0.92); border-radius: 8px; padding: 10px 14px; z-index: 10; font-size: 11px; }
-    .legend-title { font-weight: 600; margin-bottom: 6px; }
-    .legend-row { display: flex; align-items: center; gap: 6px; margin-bottom: 3px; cursor: pointer; user-select: none; transition: opacity 0.2s; }
+    /* Legend — SDK-style */
+    .legend { position: absolute; bottom: 30px; right: 14px; background: #242424; border-radius: 4px; padding: 0; z-index: 10; font-size: 12px; color: #d1d1d1; box-shadow: 0 1px 4px rgba(0,0,0,0.6); overflow: hidden; }
+    .legend-header { padding: 8px 12px; font-size: 11px; font-weight: 600; color: #acacac; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid #3a3a3a; }
+    .legend-title { padding: 6px 12px 4px; font-size: 13px; font-weight: 500; color: #d1d1d1; }
+    .legend-body { padding: 4px 12px 10px; }
+    .legend-row { display: flex; align-items: center; gap: 8px; padding: 3px 0; cursor: pointer; user-select: none; transition: opacity 0.2s; }
     .legend-row.dimmed { opacity: 0.3; }
     .legend-row.active { font-weight: 600; }
-    .legend-swatch { width: 18px; height: 14px; border-radius: 2px; flex-shrink: 0; }
+    .legend-swatch { width: 24px; height: 12px; border-radius: 1px; flex-shrink: 0; }
 
     /* Loading overlay */
     #loading { position: fixed; inset: 0; background: rgba(26,32,40,0.95); display: flex; align-items: center; justify-content: center; z-index: 9999; font-size: 18px; }
@@ -171,7 +173,7 @@
 
     /* Export toolbar */
     .export-toolbar {
-      position: absolute; top: 12px; right: 12px; z-index: 10; display: flex; gap: 6px;
+      position: absolute; top: 56px; right: 12px; z-index: 10; display: flex; gap: 6px;
     }
     .export-toolbar button {
       padding: 7px 12px; background: rgba(22,40,58,0.92); color: #e0e0e0; border: 1px solid #2a3545;
@@ -188,12 +190,12 @@
 
     /* Mobile responsive */
     @media (max-width: 768px) {
-      .top-bar { flex-wrap: nowrap; padding: 8px 12px; gap: 10px; }
-      .top-bar h1 { font-size: 13px; flex-shrink: 0; }
-      .indicators { gap: 6px; flex-wrap: nowrap; overflow-x: auto; justify-content: flex-end; }
-      .indicator { min-width: unset; padding: 5px 10px; }
-      .indicator .value { font-size: 14px; }
-      .indicator .label { font-size: 8px; }
+      .top-bar { flex-wrap: wrap; padding: 8px 12px; gap: 8px; }
+      .top-bar h1 { font-size: 15px; flex-shrink: 0; }
+      .indicators { gap: 6px; flex-wrap: wrap; justify-content: flex-start; flex: 1 1 100%; }
+      .indicator { min-width: unset; flex: 1 1 auto; padding: 6px 10px; }
+      .indicator .value { font-size: 16px; }
+      .indicator .label { font-size: 9px; }
 
       .main-content { flex-direction: column; position: relative; overflow: hidden; }
 
@@ -214,7 +216,11 @@
       .export-toolbar { flex-wrap: wrap; gap: 4px; top: 8px; right: 8px; left: auto; }
       .export-toolbar button { padding: 5px 8px; font-size: 11px; }
 
+      .filter-group .filter-header { display: none; }
+
       .legend { bottom: 10px; right: 8px; padding: 8px 10px; font-size: 10px; }
+
+      .time-slider-toggle, .time-slider { display: none !important; }
 
       .table-container.collapsed { height: 0 !important; }
       .table-container { height: 160px; }
@@ -232,6 +238,15 @@
 
       .export-toolbar { flex-direction: column; gap: 4px; }
       .export-toolbar button { font-size: 10px; padding: 5px 7px; }
+    }
+
+    /* Short screens (landscape tablets, small laptops) */
+    @media (max-height: 650px) {
+      .sidebar { padding: 8px 12px; gap: 8px; }
+      .filter-group .filter-header { display: none; }
+      .filter-group select { padding: 8px 12px; }
+      .date-slider-group .filter-header { font-size: 10px; padding: 6px 10px; }
+      .sidebar .btn-reset { padding: 6px; font-size: 11px; }
     }
 
     /* Splash / About modal */
@@ -264,7 +279,7 @@
 
     /* Time slider */
     .time-slider {
-      position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%);
+      position: absolute; bottom: 24px; left: 50%; transform: translateX(-50%);
       z-index: 10; background: rgba(22,40,58,0.92); border-radius: 8px;
       padding: 8px 14px 6px; display: flex; flex-direction: column; gap: 4px;
       font-size: 11px; color: #e0e0e0; backdrop-filter: blur(4px);
@@ -320,12 +335,12 @@
       font-size: 10px; color: #8a9aaa; text-align: center; white-space: nowrap;
     }
     .time-slider-toggle {
-      position: absolute; bottom: 8px; left: 8px; z-index: 10;
-      background: rgba(22,40,58,0.92); color: #e0e0e0; border: 1px solid #2a3545;
-      border-radius: 6px; padding: 4px 10px; font-size: 11px; font-family: inherit;
-      cursor: pointer; transition: all 0.15s;
+      position: absolute; bottom: 75px; left: 50px; z-index: 10;
+      padding: 7px 12px; background: rgba(22,40,58,0.92); color: #e0e0e0; border: 1px solid #2a3545;
+      border-radius: 5px; font-size: 12px; font-family: inherit; cursor: pointer; transition: all 0.15s;
+      display: flex; align-items: center; gap: 5px;
     }
-    .time-slider-toggle:hover { border-color: #d46a30; }
+    .time-slider-toggle:hover { background: #0e3850; border-color: #d46a30; color: #fff; }
     .time-slider-toggle.active { background: #d46a30; color: #fff; border-color: #d46a30; }
   </style>
 </head>
@@ -361,23 +376,23 @@
       <div class="sidebar" id="sidebar">
         <div class="filter-group" id="fgState">
           <div class="filter-header"><span>State</span><span class="clear-btn" data-target="filterState">clear</span></div>
-          <select id="filterState"><option value="">All</option></select>
+          <select id="filterState"><option value="">All States</option></select>
         </div>
         <div class="filter-group" id="fgSpecies">
           <div class="filter-header"><span>Species</span><span class="clear-btn" data-target="filterSpecies">clear</span></div>
-          <select id="filterSpecies"><option value="">All</option></select>
+          <select id="filterSpecies"><option value="">All Species</option></select>
         </div>
         <div class="filter-group" id="fgStrain">
           <div class="filter-header"><span>HPAI Strain</span><span class="clear-btn" data-target="filterStrain">clear</span></div>
-          <select id="filterStrain"><option value="">All</option></select>
+          <select id="filterStrain"><option value="">All Strains</option></select>
         </div>
         <div class="filter-group" id="fgWOAH">
           <div class="filter-header"><span>WOAH Classification</span><span class="clear-btn" data-target="filterWOAH">clear</span></div>
-          <select id="filterWOAH"><option value="">All</option></select>
+          <select id="filterWOAH"><option value="">All Classifications</option></select>
         </div>
         <div class="filter-group" id="fgSampling">
           <div class="filter-header"><span>Sampling Method</span><span class="clear-btn" data-target="filterSampling">clear</span></div>
-          <select id="filterSampling"><option value="">All</option></select>
+          <select id="filterSampling"><option value="">All Methods</option></select>
         </div>
         <div class="date-slider-group" id="fgDate">
           <div class="filter-header"><span>Collection Date</span><span class="clear-btn" id="clearDate">clear</span></div>
@@ -412,10 +427,10 @@
             <button id="btnExportPDF" title="Export filtered data to PDF" disabled>&#128438; Export PDF</button>
           </div>
           <div style="position:absolute; bottom:30px; right:14px; z-index:10; display:flex; flex-direction:column; align-items:flex-end; gap:6px;">
-            <button id="btnToggleLabels" title="Toggle county labels" style="background:rgba(22,40,58,0.92); color:#e0e0e0; border:1px solid rgba(255,255,255,0.15); border-radius:6px; padding:4px 10px; font-size:11px; font-family:inherit; cursor:pointer; transition:all 0.15s;">Labels Off</button>
+            <button id="btnToggleLabels" title="Toggle county labels" style="padding:7px 12px; background:rgba(22,40,58,0.92); color:#e0e0e0; border:1px solid #2a3545; border-radius:5px; font-size:12px; font-family:inherit; cursor:pointer; transition:all 0.15s; display:flex; align-items:center; gap:5px;">Labels Off</button>
             <div class="legend" id="legend" style="position:static;"></div>
           </div>
-          <button class="time-slider-toggle" id="btnTimeSlider">&#9654; Time Slider</button>
+          <button class="time-slider-toggle" id="btnTimeSlider">&#128339; Time Slider</button>
           <div class="time-slider hidden" id="timeSlider">
             <div class="time-slider-controls">
               <button class="time-slider-btn" id="tsBack" title="Previous month">&#9664;</button>
@@ -464,24 +479,23 @@
       "esri/Map",
       "esri/views/MapView",
       "esri/layers/FeatureLayer",
-      "esri/layers/GeoJSONLayer",
       "esri/Graphic",
       "esri/layers/GraphicsLayer",
       "esri/renderers/ClassBreaksRenderer",
-      "esri/symbols/SimpleFillSymbol",
       "esri/geometry/Extent",
-      "esri/request",
       "esri/geometry/geometryEngine",
-      "esri/geometry/Polygon"
-    ], function (Map, MapView, FeatureLayer, GeoJSONLayer, Graphic, GraphicsLayer, ClassBreaksRenderer, SimpleFillSymbol, Extent, esriRequest, geometryEngine, Polygon) {
+      "esri/geometry/Polygon",
+      "esri/widgets/Home",
+      "esri/widgets/Search",
+      "esri/widgets/ScaleBar"
+    ], function (Map, MapView, FeatureLayer, Graphic, GraphicsLayer, ClassBreaksRenderer, Extent, geometryEngine, Polygon, Home, Search, ScaleBar) {
 
       // ── Portal item IDs ──
-      const COUNTY_ITEM_ID = "b433c654dfc04fd1beee9f0d3bc8610d";
-      const AGOL = "https://www.arcgis.com/sharing/rest/content/items";
+      const COUNTY_ITEM_ID = "3c164274a80748dda926a046525da610";
 
       // ── State ──
       let allBirdFluRecords = [];
-      let countyFeatures = [];       // raw JSON features from county layer
+      let countyFeatures = [];       // plain objects with geometry + attributes
       let countyLookup = {};          // "STATE|COUNTY" -> index
       let filteredRecords = [];
       let countyGraphicsLayer;
@@ -519,10 +533,17 @@
         return (state + "|" + county).toUpperCase();
       }
 
+      // Strip county type suffixes from feature layer names to match APHIS data
+      function stripCountySuffix(name) {
+        return name.replace(/\s+(County|Parish|Borough|Census Area|Municipality|city|City and Borough)$/i, '');
+      }
+
       function populateSelect(id, values, preserveSelection) {
         const sel = document.getElementById(id);
         const prevVal = preserveSelection ? sel.value : "";
-        sel.innerHTML = '<option value="">All</option>';
+        // Preserve the placeholder text from the first option
+        const placeholder = sel.options[0] ? sel.options[0].textContent : "All";
+        sel.innerHTML = '<option value="">' + placeholder + '</option>';
         values.sort().forEach(v => {
           const opt = document.createElement("option");
           opt.value = v;
@@ -724,62 +745,17 @@
         return isNaN(dt) ? "" : dt.toLocaleDateString("en-US");
       }
 
-      // ── Fetch all records from a paginated ArcGIS feature service ──
-      async function fetchAllFeatures(url, fields, where) {
-        const all = [];
-        let offset = 0;
-        const pageSize = 1000;
-        where = where || "1=1";
-        while (true) {
-          const params = `?where=${encodeURIComponent(where)}&outFields=${encodeURIComponent(fields)}&returnGeometry=false&f=json&resultOffset=${offset}&resultRecordCount=${pageSize}`;
-          const resp = await fetch(url + "/query" + params);
-          const data = await resp.json();
-          if (!data.features || data.features.length === 0) break;
-          all.push(...data.features.map(f => f.attributes));
-          if (data.features.length < pageSize && !data.exceededTransferLimit) break;
-          offset += data.features.length;
-        }
-        // Normalize Bird_Species → Bird_species for internal consistency
-        return all.map(r => {
-          if ("Bird_Species" in r && !("Bird_species" in r)) {
-            r.Bird_species = r.Bird_Species;
-            delete r.Bird_Species;
-          }
-          return r;
-        });
-      }
-
-      async function fetchAllGeoFeatures(url, fields) {
-        const all = [];
-        let offset = 0;
-        const pageSize = 1000;
-        while (true) {
-          const params = `?where=1%3D1&outFields=${encodeURIComponent(fields)}&returnGeometry=true&outSR=4326&f=json&resultOffset=${offset}&resultRecordCount=${pageSize}`;
-          const resp = await fetch(url + "/query" + params);
-          const data = await resp.json();
-          if (!data.features || data.features.length === 0) break;
-          all.push(...data.features);
-          if (data.features.length < pageSize) break;
-          offset += pageSize;
-        }
-        return all;
-      }
-
-      // ── Resolve item → service URL ──
-      async function resolveServiceUrl(itemId) {
-        const resp = await fetch(`${AGOL}/${itemId}?f=json`);
-        const data = await resp.json();
-        return data.url;
-      }
-
       // ── Build legend ──
       function buildLegend() {
         const el = document.getElementById("legend");
-        let html = '<div class="legend-title">Cases per County</div>';
+        let html = '<div class="legend-header">Legend</div>';
+        html += '<div class="legend-title">Cases per County</div>';
+        html += '<div class="legend-body">';
         BREAKS.forEach((b, i) => {
           const [r, g, bb, a] = b.color;
           html += `<div class="legend-row" data-break="${i}"><div class="legend-swatch" style="background:rgba(${r},${g},${bb},${a / 255})"></div>${b.label}</div>`;
         });
+        html += '</div>';
         el.innerHTML = html;
 
         // Click to highlight: dims others, multi-select supported
@@ -843,19 +819,8 @@
       window.zoomToCounty = function(state, county) {
         const k = key(state, county);
         const cf = countyFeatures.find(f => key(f.attributes.STATE_NAME, f.attributes.NAME) === k);
-        if (!cf || !cf.geometry || !cf.geometry.rings) return;
-
-        let xmin = Infinity, ymin = Infinity, xmax = -Infinity, ymax = -Infinity;
-        cf.geometry.rings.forEach(ring => {
-          ring.forEach(pt => {
-            if (pt[0] < xmin) xmin = pt[0];
-            if (pt[0] > xmax) xmax = pt[0];
-            if (pt[1] < ymin) ymin = pt[1];
-            if (pt[1] > ymax) ymax = pt[1];
-          });
-        });
-        if (xmin === Infinity) return;
-        view.goTo(new Extent({ xmin, ymin, xmax, ymax, spatialReference: { wkid: 4326 } }).expand(1.5));
+        if (!cf || !cf.geometry) return;
+        view.goTo(cf.geometry.extent.expand(1.5));
       };
 
       // ── Zoom to filtered county extent ──
@@ -869,15 +834,12 @@
         countyFeatures.forEach(cf => {
           const k = key(cf.attributes.STATE_NAME, cf.attributes.NAME);
           if (!activeKeys.has(k)) return;
-          if (!cf.geometry || !cf.geometry.rings) return;
-          cf.geometry.rings.forEach(ring => {
-            ring.forEach(pt => {
-              if (pt[0] < xmin) xmin = pt[0];
-              if (pt[0] > xmax) xmax = pt[0];
-              if (pt[1] < ymin) ymin = pt[1];
-              if (pt[1] > ymax) ymax = pt[1];
-            });
-          });
+          if (!cf.geometry) return;
+          const ext = cf.geometry.extent;
+          if (ext.xmin < xmin) xmin = ext.xmin;
+          if (ext.xmax > xmax) xmax = ext.xmax;
+          if (ext.ymin < ymin) ymin = ext.ymin;
+          if (ext.ymax > ymax) ymax = ext.ymax;
         });
 
         if (xmin === Infinity) return;
@@ -926,6 +888,8 @@
 
       // ── Map update ──
       function updateMap() {
+        if (!countyGraphicsLayer) return;
+
         // Count cases per county
         const counts = {};
         filteredRecords.forEach(r => {
@@ -936,7 +900,7 @@
         countyGraphicsLayer.removeAll();
         const graphics = [];
 
-        countyFeatures.forEach((cf, idx) => {
+        countyFeatures.forEach(cf => {
           const st = cf.attributes.STATE_NAME;
           const cn = cf.attributes.NAME;
           const k = key(st, cn);
@@ -948,15 +912,8 @@
 
           const color = colorForCount(count);
 
-          let geom;
-          if (cf.geometry.rings) {
-            geom = { type: "polygon", rings: cf.geometry.rings, spatialReference: { wkid: 4326 } };
-          } else {
-            return;
-          }
-
           const g = new Graphic({
-            geometry: geom,
+            geometry: cf.geometry,
             symbol: {
               type: "simple-fill",
               color: color,
@@ -1470,17 +1427,47 @@
       // ── Initialize ──
       async function init() {
         try {
-          // Resolve county service URL
-          const countyUrl = await resolveServiceUrl(COUNTY_ITEM_ID);
+          // Load county FeatureLayer to query its features
+          const sourceLayer = new FeatureLayer({
+            portalItem: { id: COUNTY_ITEM_ID }
+          });
+          await sourceLayer.load();
 
-          // Fetch data in parallel: bird flu from local JSON, counties from ArcGIS
-          const [bfResp, cData] = await Promise.all([
-            fetch("data/hpai-wild-birds.json").then(r => r.json()),
-            fetchAllGeoFeatures(countyUrl + "/0", "STATE_NAME,NAME")
-          ]);
+          // Fetch data in parallel: bird flu JSON + county geometries (paginated)
+          const bfPromise = fetch("data/hpai-wild-birds.json").then(r => r.json());
 
-          allBirdFluRecords = bfResp;
-          countyFeatures = cData;
+          // Query all county features with geometry
+          const allCountyFeatures = [];
+          let start = 0;
+          const pageSize = 2000;
+          while (true) {
+            const result = await sourceLayer.queryFeatures({
+              where: "1=1",
+              outFields: ["OBJECTID", "STATE_NAME", "NAME"],
+              returnGeometry: true,
+              outSpatialReference: { wkid: 4326 },
+              start: start,
+              num: pageSize
+            });
+            allCountyFeatures.push(...result.features);
+            if (result.features.length < pageSize) break;
+            start += pageSize;
+          }
+
+          allBirdFluRecords = await bfPromise;
+
+          // Convert queried Graphics to plain objects with raw ring geometry
+          countyFeatures = allCountyFeatures.map(f => ({
+            geometry: f.geometry.rings
+              ? { type: "polygon", rings: f.geometry.rings, spatialReference: { wkid: 4326 } }
+              : null,
+            attributes: {
+              OBJECTID: f.attributes.OBJECTID,
+              STATE_NAME: f.attributes.STATE_NAME,
+              NAME: stripCountySuffix(f.attributes.NAME)
+            }
+          })).filter(f => f.geometry !== null);
+          console.log("Loaded " + countyFeatures.length + " county features");
 
           // Build county lookup
           countyFeatures.forEach((cf, i) => {
@@ -1505,11 +1492,12 @@
 
           // County labels (subtle)
           const countyLabelLayer = new FeatureLayer({
-            url: countyUrl + "/0",
+            portalItem: { id: COUNTY_ITEM_ID },
+            popupEnabled: false,
             renderer: { type: "simple", symbol: { type: "simple-fill", color: [0,0,0,0], outline: { color: [0,0,0,0], width: 0 } } },
             labelingInfo: [{
               labelExpression: "[NAME]",
-              labelExpressionInfo: { expression: "Upper($feature.NAME)" },
+              labelExpressionInfo: { expression: "Upper(Replace(Replace(Replace(Replace(Replace($feature.NAME, ' County', ''), ' Parish', ''), ' Borough', ''), ' Census Area', ''), ' Municipality', ''))" },
               symbol: {
                 type: "text",
                 color: [210, 210, 220, 200],
@@ -1557,7 +1545,13 @@
           });
 
           await view.when();
-          view.ui.move("zoom", "bottom-left");
+          view.ui.move("zoom", "top-left");
+
+          // SDK widgets
+          view.ui.add(new Home({ view: view }), "top-left");
+          view.ui.add(new Search({ view: view }), "top-right");
+          view.ui.add(new ScaleBar({ view: view, unit: "dual" }), "bottom-left");
+
           buildLegend();
           setupMapClick();
           setupSelectionTools();
@@ -1594,18 +1588,26 @@
 
             var monthNames = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 
-            // Count new cases per month
+            // Count new cases per month (filtered by state)
             var monthlyCounts = months.map(function() { return 0; });
-            allBirdFluRecords.forEach(function(r) {
-              if (!r.Collection_Date) return;
-              var rd = new Date(r.Collection_Date);
-              for (var mi = 0; mi < months.length; mi++) {
-                var mStart = months[mi];
-                var mEnd = mi < months.length - 1 ? months[mi + 1] : new Date(mStart.getFullYear(), mStart.getMonth() + 1, 1);
-                if (rd >= mStart && rd < mEnd) { monthlyCounts[mi]++; break; }
-              }
-            });
-            var maxCount = Math.max.apply(null, monthlyCounts) || 1;
+            var maxCount = 1;
+
+            function recomputeHistogram() {
+              var selState = getSelectedValue("filterState");
+              monthlyCounts = months.map(function() { return 0; });
+              allBirdFluRecords.forEach(function(r) {
+                if (!r.Collection_Date) return;
+                if (selState && r.State !== selState) return;
+                var rd = new Date(r.Collection_Date);
+                for (var mi = 0; mi < months.length; mi++) {
+                  var mStart = months[mi];
+                  var mEnd = mi < months.length - 1 ? months[mi + 1] : new Date(mStart.getFullYear(), mStart.getMonth() + 1, 1);
+                  if (rd >= mStart && rd < mEnd) { monthlyCounts[mi]++; break; }
+                }
+              });
+              maxCount = Math.max.apply(null, monthlyCounts) || 1;
+            }
+            recomputeHistogram();
 
             var tsIdx = months.length - 1; // current index (start at latest)
             var playing = false;
@@ -1640,6 +1642,19 @@
               bars.push(bar);
             });
 
+            function refreshHistogramBars() {
+              recomputeHistogram();
+              bars.forEach(function(bar, i) {
+                var h = Math.max(2, Math.round((monthlyCounts[i] / maxCount) * 40));
+                bar.style.height = h + "px";
+                var tip = bar.querySelector(".ts-bar-tooltip");
+                tip.textContent = monthNames[months[i].getMonth()] + " " + months[i].getFullYear() + ": " + monthlyCounts[i].toLocaleString() + " new";
+              });
+            }
+
+            // Listen for state filter changes
+            document.getElementById("filterState").addEventListener("change", refreshHistogramBars);
+
             var tsActive = false;
             var savedSliderMin, savedSliderMax, savedSliderDirty;
 
@@ -1652,7 +1667,7 @@
               fill.style.width = pct + "%";
               thumb.style.left = pct + "%";
               label.textContent = fmtMonth(months[tsIdx]);
-              countLabel.textContent = monthlyCounts[tsIdx].toLocaleString() + " new cases";
+              countLabel.textContent = monthlyCounts[tsIdx].toLocaleString() + " new";
               // Highlight bars
               bars.forEach(function(bar, i) {
                 bar.classList.remove("active", "past");
@@ -1684,7 +1699,7 @@
               tsActive = !tsActive;
               slider.classList.toggle("hidden", !tsActive);
               this.classList.toggle("active", tsActive);
-              this.innerHTML = tsActive ? "&#9632; Time Slider" : "&#9654; Time Slider";
+              this.innerHTML = tsActive ? "&#128339; Time Slider &#9632;" : "&#128339; Time Slider";
               if (tsActive) {
                 // Save current date filter state
                 savedSliderMin = sliderMin;
