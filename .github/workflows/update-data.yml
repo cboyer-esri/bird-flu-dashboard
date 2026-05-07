@@ -1,0 +1,39 @@
+name: Update APHIS Data
+
+on:
+  schedule:
+    # Run daily at 6:00 AM UTC (1:00 AM EST)
+    - cron: "0 6 * * *"
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  update-data:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Create data directory
+        run: mkdir -p data
+
+      - name: Fetch APHIS CSV
+        run: curl -s "https://www.aphis.usda.gov/sites/default/files/hpai-wild-birds.csv" -o data/hpai-wild-birds.csv
+
+      - name: Convert CSV to JSON
+        run: node scripts/convert_csv.js
+
+      - name: Commit and push if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/hpai-wild-birds.json
+          if git diff --cached --quiet; then
+            echo "No data changes detected"
+          else
+            RECORDS=$(node -e "console.log(require('./data/hpai-wild-birds.json').length)")
+            git commit -m "Update APHIS wild bird data ($RECORDS records)"
+            git push
+          fi

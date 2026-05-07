@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>HPAI Wild Bird Cases Dashboard</title>
+  <title>Bird Flu in Wild Birds — HPAI Detections Dashboard</title>
   <link rel="stylesheet" href="https://js.arcgis.com/4.30/esri/themes/dark/main.css" />
   <link rel="stylesheet" href="https://webapps-cdn.esri.com/CDN/fonts/v1.4.0/fonts.css" />
   <script src="https://js.arcgis.com/4.30/"></script>
@@ -13,31 +13,31 @@
   <script>window.define = defined_save;</script>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    html, body { height: 100%; font-family: "Avenir Next W00", "Avenir Next", "Avenir", "Helvetica Neue", sans-serif; background: #1a1a2e; color: #e0e0e0; }
+    html, body { height: 100%; font-family: "Avenir Next W00", "Avenir Next", "Avenir", "Helvetica Neue", sans-serif; background: #1a2028; color: #e0e0e0; }
 
     /* Layout */
     .app-container { display: flex; flex-direction: column; height: 100vh; }
-    .top-bar { display: flex; align-items: center; gap: 16px; padding: 10px 20px; background: #16213e; border-bottom: 1px solid #0f3460; flex-shrink: 0; }
-    .top-bar h1 { font-size: 16px; font-weight: 600; white-space: nowrap; color: #e94560; }
+    .top-bar { display: flex; align-items: center; gap: 16px; padding: 10px 20px; background: #16283a; border-bottom: 1px solid #0e3850; flex-shrink: 0; }
+    .top-bar h1 { font-size: 22px; font-weight: 600; white-space: nowrap; color: #d46a30; }
     .indicators { display: flex; gap: 12px; flex: 1; justify-content: flex-end; }
-    .indicator { background: #0f3460; border-radius: 8px; padding: 8px 18px; text-align: center; min-width: 130px; }
-    .indicator .value { font-size: 22px; font-weight: 700; color: #e94560; }
-    .indicator .label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: #a0a0b0; margin-top: 2px; }
+    .indicator { background: #0e3850; border-radius: 8px; padding: 8px 18px; text-align: center; min-width: 130px; }
+    .indicator .value { font-size: 22px; font-weight: 700; color: #d46a30; }
+    .indicator .label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: #8a9aaa; margin-top: 2px; }
 
     .main-content { display: flex; flex: 1; overflow: hidden; }
 
     /* Sidebar */
-    .sidebar { width: 280px; min-width: 280px; background: #16213e; border-right: 1px solid #0f3460; display: flex; flex-direction: column; overflow-y: auto; padding: 16px; gap: 16px; }
+    .sidebar { width: 280px; min-width: 280px; background: #16283a; border-right: 1px solid #0e3850; display: flex; flex-direction: column; overflow-y: auto; padding: 16px; gap: 16px; }
 
     /* Category Selector style */
-    .filter-group { background: #1a1a2e; border: 1px solid #2a2a4a; border-radius: 6px; padding: 0; overflow: hidden; }
+    .filter-group { background: #1a2028; border: 1px solid #2a3545; border-radius: 6px; padding: 0; overflow: hidden; }
     .filter-group .filter-header {
       display: flex; align-items: center; justify-content: space-between;
       padding: 8px 12px; font-size: 11px; font-weight: 600; text-transform: uppercase;
-      letter-spacing: 0.8px; color: #8a8aaa; border-bottom: 1px solid #2a2a4a;
+      letter-spacing: 0.8px; color: #8a9aaa; border-bottom: 1px solid #2a3545;
     }
     .filter-group .filter-header .clear-btn {
-      font-size: 10px; color: #e94560; cursor: pointer; text-transform: none;
+      font-size: 10px; color: #d46a30; cursor: pointer; text-transform: none;
       letter-spacing: 0; font-weight: 400; opacity: 0; transition: opacity 0.2s;
     }
     .filter-group.has-value .filter-header .clear-btn { opacity: 1; }
@@ -46,42 +46,56 @@
       width: 100%; padding: 10px 12px; background: transparent; color: #e0e0e0;
       border: none; font-size: 13px; font-family: inherit; cursor: pointer;
       appearance: none; -webkit-appearance: none;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%238a8aaa'/%3E%3C/svg%3E");
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%238a9aaa'/%3E%3C/svg%3E");
       background-repeat: no-repeat; background-position: right 12px center;
     }
-    .filter-group select:focus { outline: none; background-color: rgba(233,69,96,0.06); }
-    .filter-group select option { background: #1a1a2e; color: #e0e0e0; padding: 6px; }
+    .filter-group select:focus { outline: none; background-color: rgba(212,106,48,0.06); }
+    .filter-group select option { background: #1a2028; color: #e0e0e0; padding: 6px; }
     .filter-group.has-value select { color: #fff; font-weight: 500; }
 
     /* Date slider */
-    .date-slider-group { background: #1a1a2e; border: 1px solid #2a2a4a; border-radius: 6px; padding: 0; overflow: hidden; }
+    .date-slider-group { background: #1a2028; border: 1px solid #2a3545; border-radius: 6px; padding: 0; overflow: hidden; }
     .date-slider-group .filter-header {
       display: flex; align-items: center; justify-content: space-between;
       padding: 8px 12px; font-size: 11px; font-weight: 600; text-transform: uppercase;
-      letter-spacing: 0.8px; color: #8a8aaa; border-bottom: 1px solid #2a2a4a;
+      letter-spacing: 0.8px; color: #8a9aaa; border-bottom: 1px solid #2a3545;
     }
     .date-slider-group .filter-header .clear-btn {
-      font-size: 10px; color: #e94560; cursor: pointer; text-transform: none;
+      font-size: 10px; color: #d46a30; cursor: pointer; text-transform: none;
       letter-spacing: 0; font-weight: 400; opacity: 0; transition: opacity 0.2s;
     }
     .date-slider-group.has-value .filter-header .clear-btn { opacity: 1; }
-    .date-slider-body { padding: 14px 12px 10px; }
-    .date-labels { display: flex; justify-content: space-between; font-size: 11px; color: #b0b0c8; margin-bottom: 4px; }
+    .date-slider-body { padding: 10px 12px 10px; }
+    .date-presets { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 8px; }
+    .date-presets button {
+      padding: 3px 8px; background: #0e3850; color: #8a9aaa; border: 1px solid #2a3545;
+      border-radius: 4px; font-size: 10px; font-family: inherit; cursor: pointer; transition: all 0.15s;
+    }
+    .date-presets button:hover { border-color: #d46a30; color: #e0e0e0; }
+    .date-presets button.active { background: #d46a30; color: #fff; border-color: #d46a30; }
+    .date-inputs { display: flex; align-items: center; gap: 6px; margin-bottom: 8px; }
+    .date-inputs input[type="date"] {
+      flex: 1; padding: 5px 6px; background: #0e3850; color: #e0e0e0; border: 1px solid #2a3545;
+      border-radius: 4px; font-size: 11px; font-family: inherit;
+    }
+    .date-inputs input[type="date"]:focus { outline: none; border-color: #d46a30; }
+    .date-inputs input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(0.7); }
+    .date-dash { color: #6a7a8a; font-size: 12px; }
     .slider-track {
-      position: relative; height: 6px; background: #2a2a4a; border-radius: 3px; margin: 10px 0;
+      position: relative; height: 6px; background: #2a3545; border-radius: 3px; margin: 10px 0;
     }
     .slider-range {
-      position: absolute; height: 100%; background: #e94560; border-radius: 3px; top: 0;
+      position: absolute; height: 100%; background: #d46a30; border-radius: 3px; top: 0;
     }
     .slider-thumb {
-      position: absolute; top: 50%; width: 16px; height: 16px; background: #e94560;
+      position: absolute; top: 50%; width: 16px; height: 16px; background: #d46a30;
       border: 2px solid #fff; border-radius: 50%; transform: translate(-50%, -50%);
       cursor: pointer; z-index: 2; transition: box-shadow 0.15s;
     }
-    .slider-thumb:hover, .slider-thumb:active { box-shadow: 0 0 0 4px rgba(233,69,96,0.3); }
+    .slider-thumb:hover, .slider-thumb:active { box-shadow: 0 0 0 4px rgba(212,106,48,0.3); }
     .slider-tooltip {
       position: absolute; bottom: 22px; left: 50%; transform: translateX(-50%);
-      background: #0f3460; color: #e0e0e0; padding: 3px 7px; border-radius: 4px;
+      background: #0e3850; color: #e0e0e0; padding: 3px 7px; border-radius: 4px;
       font-size: 10px; white-space: nowrap; pointer-events: none;
       opacity: 0; transition: opacity 0.15s;
     }
@@ -89,11 +103,11 @@
     .slider-thumb.active .slider-tooltip { opacity: 1; }
 
     .btn-reset {
-      width: 100%; padding: 10px; background: transparent; color: #e94560; border: 1px solid #e94560;
+      width: 100%; padding: 10px; background: transparent; color: #d46a30; border: 1px solid #d46a30;
       border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 600;
       font-family: inherit; text-transform: uppercase; letter-spacing: 0.6px; transition: all 0.2s;
     }
-    .btn-reset:hover { background: #e94560; color: #fff; }
+    .btn-reset:hover { background: #d46a30; color: #fff; }
 
     /* Map */
     .map-and-table { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
@@ -106,53 +120,53 @@
     }
     .table-tab-arrow {
       display: flex; align-items: center; justify-content: center;
-      width: 48px; height: 20px; background: #0f3460; color: #a0a0b0;
+      width: 48px; height: 20px; background: #0e3850; color: #8a9aaa;
       border-radius: 6px 6px 0 0; cursor: pointer; font-size: 10px;
       transition: background 0.15s, color 0.15s; user-select: none;
-      border: 1px solid #2a2a4a; border-bottom: none;
+      border: 1px solid #2a3545; border-bottom: none;
     }
-    .table-tab-arrow:hover { background: #1a2a5e; color: #e94560; }
+    .table-tab-arrow:hover { background: #1a3050; color: #d46a30; }
     .table-tab.open .table-tab-arrow { transform: rotate(180deg); }
 
     /* Table - resizable */
-    .table-container { background: #16213e; border-top: 1px solid #0f3460; overflow: hidden; display: flex; flex-direction: column; flex-shrink: 0; height: 220px; min-height: 0; }
+    .table-container { background: #16283a; border-top: 1px solid #0e3850; overflow: hidden; display: flex; flex-direction: column; flex-shrink: 0; height: 220px; min-height: 0; }
     .table-container.collapsed { height: 0 !important; border-top: none; }
     .resize-handle {
       height: 5px; cursor: ns-resize; background: transparent; flex-shrink: 0;
       display: flex; align-items: center; justify-content: center; transition: background 0.15s;
     }
-    .resize-handle:hover, .resize-handle.active { background: #e94560; }
-    .resize-handle::after { content: ''; width: 32px; height: 2px; background: #4a4a6a; border-radius: 1px; }
+    .resize-handle:hover, .resize-handle.active { background: #d46a30; }
+    .resize-handle::after { content: ''; width: 32px; height: 2px; background: #4a5a6a; border-radius: 1px; }
     .resize-handle:hover::after, .resize-handle.active::after { background: #fff; }
     .table-header {
-      padding: 8px 14px; background: #0f3460; font-size: 13px; font-weight: 600; flex-shrink: 0; user-select: none;
+      padding: 8px 14px; background: #0e3850; font-size: 13px; font-weight: 600; flex-shrink: 0; user-select: none;
     }
     .table-scroll { overflow: auto; flex: 1; }
     table { width: 100%; border-collapse: collapse; font-size: 12px; font-family: inherit; }
-    thead th { position: sticky; top: 0; background: #16213e; padding: 6px 10px; text-align: left; border-bottom: 1px solid #0f3460; white-space: nowrap; font-weight: 600; }
-    tbody td { padding: 5px 10px; border-bottom: 1px solid #1a1a2e; white-space: nowrap; }
-    tbody tr:hover { background: #1a2a5e; }
+    thead th { position: sticky; top: 0; background: #16283a; padding: 6px 10px; text-align: left; border-bottom: 1px solid #0e3850; white-space: nowrap; font-weight: 600; }
+    tbody td { padding: 5px 10px; border-bottom: 1px solid #1a2028; white-space: nowrap; }
+    tbody tr:hover { background: #1a3050; }
 
     /* Mobile filter button */
     .mobile-filter-btn {
       display: none; position: absolute; top: 8px; left: 8px; z-index: 20;
-      padding: 8px 14px; background: rgba(22,33,62,0.95); color: #e0e0e0;
-      border: 1px solid #2a2a4a; border-radius: 6px; font-size: 13px;
+      padding: 8px 14px; background: rgba(22,40,58,0.95); color: #e0e0e0;
+      border: 1px solid #2a3545; border-radius: 6px; font-size: 13px;
       font-family: inherit; cursor: pointer; transition: all 0.15s;
     }
-    .mobile-filter-btn:hover { background: #0f3460; border-color: #e94560; }
-    .mobile-filter-btn.active { background: #e94560; color: #fff; border-color: #e94560; }
+    .mobile-filter-btn:hover { background: #0e3850; border-color: #d46a30; }
+    .mobile-filter-btn.active { background: #d46a30; color: #fff; border-color: #d46a30; }
 
     /* Legend */
-    .legend { position: absolute; bottom: 30px; right: 14px; background: rgba(22,33,62,0.92); border-radius: 8px; padding: 10px 14px; z-index: 10; font-size: 11px; }
+    .legend { position: absolute; bottom: 30px; right: 14px; background: rgba(22,40,58,0.92); border-radius: 8px; padding: 10px 14px; z-index: 10; font-size: 11px; }
     .legend-title { font-weight: 600; margin-bottom: 6px; }
     .legend-row { display: flex; align-items: center; gap: 6px; margin-bottom: 3px; cursor: pointer; user-select: none; transition: opacity 0.2s; }
-    .legend-row.disabled { opacity: 0.35; }
-    .legend-row.disabled .legend-swatch { background: #444 !important; }
+    .legend-row.dimmed { opacity: 0.3; }
+    .legend-row.active { font-weight: 600; }
     .legend-swatch { width: 18px; height: 14px; border-radius: 2px; flex-shrink: 0; }
 
     /* Loading overlay */
-    #loading { position: fixed; inset: 0; background: rgba(26,26,46,0.95); display: flex; align-items: center; justify-content: center; z-index: 9999; font-size: 18px; }
+    #loading { position: fixed; inset: 0; background: rgba(26,32,40,0.95); display: flex; align-items: center; justify-content: center; z-index: 9999; font-size: 18px; }
     #loading.hidden { display: none; }
 
     /* Export toolbar */
@@ -160,15 +174,15 @@
       position: absolute; top: 12px; right: 12px; z-index: 10; display: flex; gap: 6px;
     }
     .export-toolbar button {
-      padding: 7px 12px; background: rgba(22,33,62,0.92); color: #e0e0e0; border: 1px solid #2a2a4a;
+      padding: 7px 12px; background: rgba(22,40,58,0.92); color: #e0e0e0; border: 1px solid #2a3545;
       border-radius: 5px; font-size: 12px; font-family: inherit; cursor: pointer; transition: all 0.15s;
       display: flex; align-items: center; gap: 5px;
     }
-    .export-toolbar button:hover { background: #0f3460; border-color: #e94560; color: #fff; }
-    .export-toolbar button.active { background: #e94560; color: #fff; border-color: #e94560; }
+    .export-toolbar button:hover { background: #0e3850; border-color: #d46a30; color: #fff; }
+    .export-toolbar button.active { background: #d46a30; color: #fff; border-color: #d46a30; }
     .export-toolbar button:disabled { opacity: 0.4; cursor: not-allowed; }
     .selection-badge {
-      background: #e94560; color: #fff; border-radius: 10px; padding: 1px 6px;
+      background: #d46a30; color: #fff; border-radius: 10px; padding: 1px 6px;
       font-size: 10px; font-weight: 700;
     }
 
@@ -187,7 +201,7 @@
 
       .sidebar {
         position: absolute; top: 0; left: 0; width: 280px; height: 100%;
-        min-width: unset; border-right: 1px solid #0f3460;
+        min-width: unset; border-right: 1px solid #0e3850;
         padding: 48px 12px 12px; z-index: 15;
         transform: translateX(-100%); transition: transform 0.25s ease;
         overflow-y: auto;
@@ -219,14 +233,120 @@
       .export-toolbar { flex-direction: column; gap: 4px; }
       .export-toolbar button { font-size: 10px; padding: 5px 7px; }
     }
+
+    /* Splash / About modal */
+    .splash-overlay {
+      position: fixed; inset: 0; background: rgba(26,32,40,0.85);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 10000; opacity: 1; transition: opacity 0.3s;
+    }
+    .splash-overlay.hidden { opacity: 0; pointer-events: none; }
+    .splash-card {
+      background: #16283a; border: 1px solid #0e3850; border-radius: 12px;
+      max-width: 520px; width: 90%; padding: 32px 28px 24px; color: #e0e0e0;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+    }
+    .splash-card h2 { font-size: 20px; font-weight: 700; color: #d46a30; margin-bottom: 4px; }
+    .splash-card .splash-subtitle { font-size: 13px; color: #8a9aaa; margin-bottom: 16px; }
+    .splash-card p { font-size: 13px; line-height: 1.6; margin-bottom: 12px; color: #c0c8d0; }
+    .splash-card a { color: #d46a30; text-decoration: none; }
+    .splash-card a:hover { text-decoration: underline; }
+    .splash-card .splash-source { font-size: 11px; color: #8a9aaa; border-top: 1px solid #2a3545; padding-top: 12px; margin-top: 8px; }
+    .splash-btn {
+      display: block; width: 100%; margin-top: 18px; padding: 10px;
+      background: #d46a30; color: #fff; border: none; border-radius: 6px;
+      font-size: 14px; font-weight: 600; font-family: inherit; cursor: pointer;
+      transition: background 0.15s;
+    }
+    .splash-btn:hover { background: #b85520; }
+    .about-link { cursor: pointer; opacity: 0.6; font-size: 12px; transition: opacity 0.15s; }
+    .about-link:hover { opacity: 1; }
+
+    /* Time slider */
+    .time-slider {
+      position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%);
+      z-index: 10; background: rgba(22,40,58,0.92); border-radius: 8px;
+      padding: 8px 14px 6px; display: flex; flex-direction: column; gap: 4px;
+      font-size: 11px; color: #e0e0e0; backdrop-filter: blur(4px);
+      border: 1px solid #2a3545; max-width: 600px; width: 90%;
+    }
+    .time-slider.hidden { display: none; }
+    .time-slider-controls {
+      display: flex; align-items: center; gap: 8px; width: 100%;
+    }
+    .time-slider-btn {
+      background: none; border: none; color: #d46a30; font-size: 16px;
+      cursor: pointer; padding: 2px 4px; line-height: 1; transition: color 0.15s;
+    }
+    .time-slider-btn:hover { color: #fff; }
+    .time-slider-chart-area {
+      flex: 1; display: flex; flex-direction: column; gap: 0; position: relative;
+    }
+    .time-slider-histogram {
+      display: flex; align-items: flex-end; gap: 1px; height: 40px;
+      width: 100%; padding: 0;
+    }
+    .ts-bar {
+      flex: 1; min-width: 0; background: #2a3545; border-radius: 2px 2px 0 0;
+      transition: background 0.15s; position: relative; cursor: pointer;
+    }
+    .ts-bar.active { background: #d46a30; }
+    .ts-bar.past { background: rgba(212,106,48,0.4); }
+    .ts-bar:hover { background: #d46a30 !important; }
+    .ts-bar-tooltip {
+      display: none; position: absolute; bottom: calc(100% + 4px); left: 50%;
+      transform: translateX(-50%); background: #16283a; color: #e0e0e0;
+      border: 1px solid #2a3545; border-radius: 4px; padding: 2px 6px;
+      font-size: 10px; white-space: nowrap; z-index: 5; pointer-events: none;
+    }
+    .ts-bar:hover .ts-bar-tooltip { display: block; }
+    .time-slider-track {
+      flex: none; width: 100%; position: relative; height: 6px; background: #2a3545;
+      border-radius: 3px; cursor: pointer;
+    }
+    .time-slider-fill {
+      position: absolute; top: 0; left: 0; height: 100%;
+      background: #d46a30; border-radius: 3px; pointer-events: none;
+    }
+    .time-slider-thumb {
+      position: absolute; top: 50%; width: 14px; height: 14px;
+      background: #d46a30; border: 2px solid #fff; border-radius: 50%;
+      transform: translate(-50%, -50%); cursor: grab; z-index: 2;
+    }
+    .time-slider-label {
+      min-width: 70px; text-align: center; font-weight: 600; white-space: nowrap;
+    }
+    .time-slider-count {
+      font-size: 10px; color: #8a9aaa; text-align: center; white-space: nowrap;
+    }
+    .time-slider-toggle {
+      position: absolute; bottom: 8px; left: 8px; z-index: 10;
+      background: rgba(22,40,58,0.92); color: #e0e0e0; border: 1px solid #2a3545;
+      border-radius: 6px; padding: 4px 10px; font-size: 11px; font-family: inherit;
+      cursor: pointer; transition: all 0.15s;
+    }
+    .time-slider-toggle:hover { border-color: #d46a30; }
+    .time-slider-toggle.active { background: #d46a30; color: #fff; border-color: #d46a30; }
   </style>
 </head>
 <body>
+  <!-- Splash modal -->
+  <div class="splash-overlay hidden" id="splashOverlay">
+    <div class="splash-card">
+      <h2>Avian Influenza in U.S. Wild Birds</h2>
+      <div class="splash-subtitle">Highly Pathogenic Avian Influenza (HPAI) Detections Dashboard</div>
+      <p>Wild birds can carry highly pathogenic avian influenza (HPAI) — a severe form of bird flu — and spread it across regions during migration, often without showing symptoms. Tracking these detections helps protect domestic poultry and other wildlife.</p>
+      <p>This dashboard maps every confirmed HPAI detection in wild birds across the United States since the current outbreak began in early 2022. Filter by state, species, strain, date range, or use the lasso tool to select counties on the map.</p>
+      <div class="splash-source">Data: <a href="https://www.aphis.usda.gov/livestock-poultry-disease/avian/avian-influenza/hpai-detections/wild-birds" target="_blank" rel="noopener">USDA APHIS</a> · Updated regularly · 19,000+ confirmed detections</div>
+      <button class="splash-btn" id="splashDismiss">Explore the Map</button>
+    </div>
+  </div>
+
   <div id="loading">Loading data…</div>
   <div class="app-container">
     <!-- Top bar with indicators -->
     <div class="top-bar">
-      <h1>HPAI Wild Bird Cases</h1>
+      <h1>Bird Flu in Wild Birds <span class="about-link" id="aboutLink" title="About this dashboard">&#9432;</span></h1>
       <div class="indicators">
         <div class="indicator"><div class="value" id="indCases">—</div><div class="label">Total Cases</div></div>
         <div class="indicator"><div class="value" id="indSpecies">—</div><div class="label">Species</div></div>
@@ -262,7 +382,17 @@
         <div class="date-slider-group" id="fgDate">
           <div class="filter-header"><span>Collection Date</span><span class="clear-btn" id="clearDate">clear</span></div>
           <div class="date-slider-body">
-            <div class="date-labels"><span id="dateLabelFrom">—</span><span id="dateLabelTo">—</span></div>
+            <div class="date-presets" id="datePresets"></div>
+            <div class="date-presets" id="datePresetsRecent">
+              <button data-preset="90d">Last 90d</button>
+              <button data-preset="6m">Last 6mo</button>
+              <button data-preset="12m">Last 12mo</button>
+            </div>
+            <div class="date-inputs">
+              <input type="date" id="dateFrom" title="Start date" />
+              <span class="date-dash">&mdash;</span>
+              <input type="date" id="dateTo" title="End date" />
+            </div>
             <div class="slider-track" id="sliderTrack">
               <div class="slider-range" id="sliderRange"></div>
               <div class="slider-thumb" id="thumbMin"><div class="slider-tooltip" id="tipMin"></div></div>
@@ -281,7 +411,29 @@
             <button id="btnClearSelection" title="Clear selection" disabled>Clear Selection <span class="selection-badge" id="selBadge" style="display:none">0</span></button>
             <button id="btnExportPDF" title="Export filtered data to PDF" disabled>&#128438; Export PDF</button>
           </div>
-          <div class="legend" id="legend"></div>
+          <div style="position:absolute; bottom:30px; right:14px; z-index:10; display:flex; flex-direction:column; align-items:flex-end; gap:6px;">
+            <button id="btnToggleLabels" title="Toggle county labels" style="background:rgba(22,40,58,0.92); color:#e0e0e0; border:1px solid rgba(255,255,255,0.15); border-radius:6px; padding:4px 10px; font-size:11px; font-family:inherit; cursor:pointer; transition:all 0.15s;">Labels Off</button>
+            <div class="legend" id="legend" style="position:static;"></div>
+          </div>
+          <button class="time-slider-toggle" id="btnTimeSlider">&#9654; Time Slider</button>
+          <div class="time-slider hidden" id="timeSlider">
+            <div class="time-slider-controls">
+              <button class="time-slider-btn" id="tsBack" title="Previous month">&#9664;</button>
+              <button class="time-slider-btn" id="tsPlay" title="Play/Pause">&#9654;</button>
+              <button class="time-slider-btn" id="tsForward" title="Next month">&#9654;</button>
+              <div class="time-slider-chart-area">
+                <div class="time-slider-histogram" id="tsHistogram"></div>
+                <div class="time-slider-track" id="tsTrack">
+                  <div class="time-slider-fill" id="tsFill"></div>
+                  <div class="time-slider-thumb" id="tsThumb"></div>
+                </div>
+              </div>
+              <div style="display:flex;flex-direction:column;align-items:center;gap:1px;">
+                <span class="time-slider-label" id="tsLabel">Jan 2022</span>
+                <span class="time-slider-count" id="tsCount"></span>
+              </div>
+            </div>
+          </div>
         </div>
         <div class="table-tab" id="tableToggle">
           <span class="table-tab-arrow">&#9650;</span>
@@ -325,7 +477,6 @@
 
       // ── Portal item IDs ──
       const COUNTY_ITEM_ID = "b433c654dfc04fd1beee9f0d3bc8610d";
-      const BIRDFLU_ITEM_ID = "41ab194468464e8cbb10ca117dd65fe8";
       const AGOL = "https://www.arcgis.com/sharing/rest/content/items";
 
       // ── State ──
@@ -419,6 +570,66 @@
         sliderMin = dateMin;
         sliderMax = dateMax;
         sliderDirty = false;
+
+        // Set date input min/max
+        document.getElementById('dateFrom').min = epochToIso(dateMin);
+        document.getElementById('dateFrom').max = epochToIso(dateMax);
+        document.getElementById('dateTo').min = epochToIso(dateMin);
+        document.getElementById('dateTo').max = epochToIso(dateMax);
+
+        // Build preset buttons from actual year range
+        const minYear = new Date(dateMin).getFullYear();
+        const maxYear = new Date(dateMax).getFullYear();
+        let presetsHtml = '';
+        for (let y = minYear; y <= maxYear; y++) {
+          presetsHtml += `<button data-year="${y}">${y}</button>`;
+        }
+        document.getElementById('datePresets').innerHTML = presetsHtml;
+
+        // Preset click handlers
+        document.querySelectorAll('#datePresets button, #datePresetsRecent button').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const y = btn.dataset.year;
+            const p = btn.dataset.preset;
+            if (y) {
+              sliderMin = Math.max(dateMin, new Date(parseInt(y), 0, 1).getTime());
+              sliderMax = Math.min(dateMax, new Date(parseInt(y), 11, 31, 23, 59, 59).getTime());
+            } else if (p === '90d') {
+              sliderMax = dateMax;
+              sliderMin = Math.max(dateMin, dateMax - 90 * 86400000);
+            } else if (p === '6m') {
+              sliderMax = dateMax;
+              sliderMin = Math.max(dateMin, dateMax - 182 * 86400000);
+            } else if (p === '12m') {
+              sliderMax = dateMax;
+              sliderMin = Math.max(dateMin, dateMax - 365 * 86400000);
+            }
+            sliderDirty = (sliderMin > dateMin || sliderMax < dateMax);
+            renderSlider();
+            applyFilters();
+          });
+        });
+
+        // Date input change handlers
+        document.getElementById('dateFrom').addEventListener('change', (e) => {
+          const val = new Date(e.target.value + 'T00:00:00').getTime();
+          if (!isNaN(val)) {
+            sliderMin = Math.max(dateMin, Math.min(val, sliderMax));
+            sliderDirty = (sliderMin > dateMin || sliderMax < dateMax);
+            renderSlider();
+            applyFilters();
+          }
+        });
+        document.getElementById('dateTo').addEventListener('change', (e) => {
+          const val = new Date(e.target.value + 'T00:00:00').getTime();
+          if (!isNaN(val)) {
+            sliderMax = Math.min(dateMax, Math.max(val, sliderMin));
+            sliderDirty = (sliderMin > dateMin || sliderMax < dateMax);
+            renderSlider();
+            applyFilters();
+          }
+        });
+
         renderSlider();
       }
 
@@ -430,10 +641,41 @@
         document.getElementById('sliderRange').style.width = (pctMax - pctMin) + '%';
         document.getElementById('thumbMin').style.left = pctMin + '%';
         document.getElementById('thumbMax').style.left = pctMax + '%';
-        document.getElementById('dateLabelFrom').textContent = fmtSliderDate(sliderMin);
-        document.getElementById('dateLabelTo').textContent = fmtSliderDate(sliderMax);
         document.getElementById('tipMin').textContent = fmtSliderDate(sliderMin);
         document.getElementById('tipMax').textContent = fmtSliderDate(sliderMax);
+        // Sync date inputs
+        document.getElementById('dateFrom').value = epochToIso(sliderMin);
+        document.getElementById('dateTo').value = epochToIso(sliderMax);
+        // Sync preset active state
+        syncPresetActive();
+      }
+
+      function epochToIso(epoch) {
+        const d = new Date(epoch);
+        return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+      }
+
+      function syncPresetActive() {
+        document.querySelectorAll('#datePresets button, #datePresetsRecent button').forEach(btn => {
+          const y = btn.dataset.year;
+          const p = btn.dataset.preset;
+          let isActive = false;
+          if (y) {
+            const ys = new Date(parseInt(y), 0, 1).getTime();
+            const ye = Math.min(new Date(parseInt(y), 11, 31, 23, 59, 59).getTime(), dateMax);
+            isActive = Math.abs(sliderMin - ys) < 86400000 && Math.abs(sliderMax - ye) < 86400000;
+          } else if (p === '90d') {
+            const expected = Math.max(dateMin, dateMax - 90 * 86400000);
+            isActive = Math.abs(sliderMin - expected) < 86400000 && Math.abs(sliderMax - dateMax) < 86400000;
+          } else if (p === '6m') {
+            const expected = Math.max(dateMin, dateMax - 182 * 86400000);
+            isActive = Math.abs(sliderMin - expected) < 86400000 && Math.abs(sliderMax - dateMax) < 86400000;
+          } else if (p === '12m') {
+            const expected = Math.max(dateMin, dateMax - 365 * 86400000);
+            isActive = Math.abs(sliderMin - expected) < 86400000 && Math.abs(sliderMax - dateMax) < 86400000;
+          }
+          btn.classList.toggle('active', isActive);
+        });
       }
 
       function setupSliderDrag() {
@@ -536,17 +778,35 @@
         let html = '<div class="legend-title">Cases per County</div>';
         BREAKS.forEach((b, i) => {
           const [r, g, bb, a] = b.color;
-          const cls = b.visible ? '' : ' disabled';
-          html += `<div class="legend-row${cls}" data-break="${i}"><div class="legend-swatch" style="background:rgba(${r},${g},${bb},${a / 255})"></div>${b.label}</div>`;
+          html += `<div class="legend-row" data-break="${i}"><div class="legend-swatch" style="background:rgba(${r},${g},${bb},${a / 255})"></div>${b.label}</div>`;
         });
         el.innerHTML = html;
 
-        // Wire up click handlers
+        // Click to highlight: dims others, multi-select supported
         el.querySelectorAll('.legend-row').forEach(row => {
           row.addEventListener('click', () => {
             const idx = parseInt(row.dataset.break);
-            BREAKS[idx].visible = !BREAKS[idx].visible;
-            row.classList.toggle('disabled', !BREAKS[idx].visible);
+            row.classList.toggle('active');
+
+            // Check how many are actively selected
+            const activeRows = el.querySelectorAll('.legend-row.active');
+            if (activeRows.length === 0) {
+              // Nothing selected → show all (reset)
+              BREAKS.forEach(b => b.visible = true);
+              el.querySelectorAll('.legend-row').forEach(r => r.classList.remove('dimmed'));
+            } else {
+              // Some selected → only those are visible, dim the rest
+              BREAKS.forEach(b => b.visible = false);
+              el.querySelectorAll('.legend-row').forEach(r => {
+                const bi = parseInt(r.dataset.break);
+                if (r.classList.contains('active')) {
+                  BREAKS[bi].visible = true;
+                  r.classList.remove('dimmed');
+                } else {
+                  r.classList.add('dimmed');
+                }
+              });
+            }
             updateMap();
           });
         });
@@ -1210,19 +1470,16 @@
       // ── Initialize ──
       async function init() {
         try {
-          // Resolve service URLs
-          const [countyUrl, birdFluUrl] = await Promise.all([
-            resolveServiceUrl(COUNTY_ITEM_ID),
-            resolveServiceUrl(BIRDFLU_ITEM_ID)
-          ]);
+          // Resolve county service URL
+          const countyUrl = await resolveServiceUrl(COUNTY_ITEM_ID);
 
-          // Fetch data in parallel
-          const [bfData, cData] = await Promise.all([
-            fetchAllFeatures(birdFluUrl + "/0", "State,County,Bird_Species,HPAI_Strain,Collection_Date,Sampling_Method,WOAH_Classification"),
+          // Fetch data in parallel: bird flu from local JSON, counties from ArcGIS
+          const [bfResp, cData] = await Promise.all([
+            fetch("data/hpai-wild-birds.json").then(r => r.json()),
             fetchAllGeoFeatures(countyUrl + "/0", "STATE_NAME,NAME")
           ]);
 
-          allBirdFluRecords = bfData;
+          allBirdFluRecords = bfResp;
           countyFeatures = cData;
 
           // Build county lookup
@@ -1246,6 +1503,51 @@
           countyGraphicsLayer = new GraphicsLayer();
           map.add(countyGraphicsLayer);
 
+          // County labels (subtle)
+          const countyLabelLayer = new FeatureLayer({
+            url: countyUrl + "/0",
+            renderer: { type: "simple", symbol: { type: "simple-fill", color: [0,0,0,0], outline: { color: [0,0,0,0], width: 0 } } },
+            labelingInfo: [{
+              labelExpression: "[NAME]",
+              labelExpressionInfo: { expression: "Upper($feature.NAME)" },
+              symbol: {
+                type: "text",
+                color: [210, 210, 220, 200],
+                haloColor: [60, 60, 80, 120],
+                haloSize: 1.5,
+                font: { size: 7.5, family: "Oswald", weight: "normal" }
+              },
+              minScale: 5000000,
+              maxScale: 0
+            }],
+            labelsVisible: false,
+            minScale: 5000000
+          });
+          map.add(countyLabelLayer);
+
+          // Labels toggle
+          document.getElementById("btnToggleLabels").addEventListener("click", function() {
+            countyLabelLayer.labelsVisible = !countyLabelLayer.labelsVisible;
+            this.classList.toggle("active", countyLabelLayer.labelsVisible);
+            this.textContent = countyLabelLayer.labelsVisible ? "Labels On" : "Labels Off";
+          });
+
+          // State boundaries
+          const statesLayer = new FeatureLayer({
+            portalItem: { id: "8c2d6d7df8fa4142b0a1211c8dd66903" },
+            renderer: {
+              type: "simple",
+              symbol: {
+                type: "simple-fill",
+                color: [0, 0, 0, 0],
+                outline: { color: [100, 140, 160, 0.5], width: 1.5 }
+              }
+            },
+            labelsVisible: false,
+            popupEnabled: false
+          });
+          map.add(statesLayer);
+
           view = new MapView({
             container: "viewDiv",
             map: map,
@@ -1265,6 +1567,202 @@
           applyFilters();
 
           document.getElementById("loading").classList.add("hidden");
+
+          // Splash modal — show after loading completes
+          var splashEl = document.getElementById("splashOverlay");
+          splashEl.classList.remove("hidden");
+          document.getElementById("splashDismiss").addEventListener("click", function() {
+            splashEl.classList.add("hidden");
+          });
+          document.getElementById("aboutLink").addEventListener("click", function(e) {
+            e.stopPropagation();
+            splashEl.classList.remove("hidden");
+          });
+
+          // ── Time Slider ──
+          (function() {
+            var months = [];
+            // Build month list from dateMin to dateMax
+            var d = new Date(dateMin);
+            d.setDate(1); d.setHours(0,0,0,0);
+            var end = new Date(dateMax);
+            while (d <= end) {
+              months.push(new Date(d));
+              d.setMonth(d.getMonth() + 1);
+            }
+            if (months.length < 2) return;
+
+            var monthNames = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+
+            // Count new cases per month
+            var monthlyCounts = months.map(function() { return 0; });
+            allBirdFluRecords.forEach(function(r) {
+              if (!r.Collection_Date) return;
+              var rd = new Date(r.Collection_Date);
+              for (var mi = 0; mi < months.length; mi++) {
+                var mStart = months[mi];
+                var mEnd = mi < months.length - 1 ? months[mi + 1] : new Date(mStart.getFullYear(), mStart.getMonth() + 1, 1);
+                if (rd >= mStart && rd < mEnd) { monthlyCounts[mi]++; break; }
+              }
+            });
+            var maxCount = Math.max.apply(null, monthlyCounts) || 1;
+
+            var tsIdx = months.length - 1; // current index (start at latest)
+            var playing = false;
+            var playTimer = null;
+            var cumulative = true; // show all data up to selected month
+
+            var slider = document.getElementById("timeSlider");
+            var toggleBtn = document.getElementById("btnTimeSlider");
+            var playBtn = document.getElementById("tsPlay");
+            var backBtn = document.getElementById("tsBack");
+            var fwdBtn = document.getElementById("tsForward");
+            var track = document.getElementById("tsTrack");
+            var fill = document.getElementById("tsFill");
+            var thumb = document.getElementById("tsThumb");
+            var label = document.getElementById("tsLabel");
+            var countLabel = document.getElementById("tsCount");
+            var histogram = document.getElementById("tsHistogram");
+
+            // Build histogram bars
+            var bars = [];
+            months.forEach(function(m, i) {
+              var bar = document.createElement("div");
+              bar.className = "ts-bar";
+              var h = Math.max(2, Math.round((monthlyCounts[i] / maxCount) * 40));
+              bar.style.height = h + "px";
+              var tip = document.createElement("span");
+              tip.className = "ts-bar-tooltip";
+              tip.textContent = monthNames[m.getMonth()] + " " + m.getFullYear() + ": " + monthlyCounts[i].toLocaleString() + " new";
+              bar.appendChild(tip);
+              bar.addEventListener("click", (function(idx) { return function(e) { e.stopPropagation(); stopPlay(); goTo(idx); }; })(i));
+              histogram.appendChild(bar);
+              bars.push(bar);
+            });
+
+            var tsActive = false;
+            var savedSliderMin, savedSliderMax, savedSliderDirty;
+
+            function fmtMonth(dt) {
+              return monthNames[dt.getMonth()] + " " + dt.getFullYear();
+            }
+
+            function updateSliderUI() {
+              var pct = (tsIdx / (months.length - 1)) * 100;
+              fill.style.width = pct + "%";
+              thumb.style.left = pct + "%";
+              label.textContent = fmtMonth(months[tsIdx]);
+              countLabel.textContent = monthlyCounts[tsIdx].toLocaleString() + " new cases";
+              // Highlight bars
+              bars.forEach(function(bar, i) {
+                bar.classList.remove("active", "past");
+                if (i === tsIdx) bar.classList.add("active");
+                else if (cumulative && i < tsIdx) bar.classList.add("past");
+              });
+            }
+
+            function applyTimeFilter() {
+              var m = months[tsIdx];
+              var mEnd = new Date(m.getFullYear(), m.getMonth() + 1, 0, 23, 59, 59);
+              if (cumulative) {
+                sliderMin = dateMin;
+              } else {
+                sliderMin = m.getTime();
+              }
+              sliderMax = mEnd.getTime();
+              sliderDirty = true;
+              applyFilters();
+            }
+
+            function goTo(idx) {
+              tsIdx = Math.max(0, Math.min(months.length - 1, idx));
+              updateSliderUI();
+              applyTimeFilter();
+            }
+
+            toggleBtn.addEventListener("click", function() {
+              tsActive = !tsActive;
+              slider.classList.toggle("hidden", !tsActive);
+              this.classList.toggle("active", tsActive);
+              this.innerHTML = tsActive ? "&#9632; Time Slider" : "&#9654; Time Slider";
+              if (tsActive) {
+                // Save current date filter state
+                savedSliderMin = sliderMin;
+                savedSliderMax = sliderMax;
+                savedSliderDirty = sliderDirty;
+                tsIdx = months.length - 1;
+                updateSliderUI();
+                applyTimeFilter();
+              } else {
+                // Restore previous date filter
+                stopPlay();
+                sliderMin = savedSliderMin;
+                sliderMax = savedSliderMax;
+                sliderDirty = savedSliderDirty;
+                applyFilters();
+              }
+            });
+
+            backBtn.addEventListener("click", function() { stopPlay(); goTo(tsIdx - 1); });
+            fwdBtn.addEventListener("click", function() { stopPlay(); goTo(tsIdx + 1); });
+
+            function stopPlay() {
+              playing = false;
+              clearInterval(playTimer);
+              playBtn.innerHTML = "&#9654;";
+            }
+
+            playBtn.addEventListener("click", function() {
+              if (playing) {
+                stopPlay();
+              } else {
+                playing = true;
+                playBtn.innerHTML = "&#9646;&#9646;";
+                if (tsIdx >= months.length - 1) tsIdx = 0;
+                playTimer = setInterval(function() {
+                  tsIdx++;
+                  if (tsIdx >= months.length) {
+                    tsIdx = months.length - 1;
+                    stopPlay();
+                  }
+                  updateSliderUI();
+                  applyTimeFilter();
+                }, 600);
+              }
+            });
+
+            // Click on track
+            track.addEventListener("click", function(e) {
+              stopPlay();
+              var rect = track.getBoundingClientRect();
+              var pct = (e.clientX - rect.left) / rect.width;
+              goTo(Math.round(pct * (months.length - 1)));
+            });
+
+            // Drag thumb
+            var dragging = false;
+            thumb.addEventListener("mousedown", function(e) { dragging = true; stopPlay(); e.preventDefault(); });
+            document.addEventListener("mousemove", function(e) {
+              if (!dragging) return;
+              var rect = track.getBoundingClientRect();
+              var pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+              goTo(Math.round(pct * (months.length - 1)));
+            });
+            document.addEventListener("mouseup", function() { dragging = false; });
+
+            // Touch support
+            thumb.addEventListener("touchstart", function(e) { dragging = true; stopPlay(); e.preventDefault(); });
+            document.addEventListener("touchmove", function(e) {
+              if (!dragging) return;
+              var rect = track.getBoundingClientRect();
+              var touch = e.touches[0];
+              var pct = Math.max(0, Math.min(1, (touch.clientX - rect.left) / rect.width));
+              goTo(Math.round(pct * (months.length - 1)));
+            });
+            document.addEventListener("touchend", function() { dragging = false; });
+
+            updateSliderUI();
+          })();
         } catch (err) {
           console.error("Init failed:", err);
           document.getElementById("loading").textContent = "Error loading data. Check console.";
