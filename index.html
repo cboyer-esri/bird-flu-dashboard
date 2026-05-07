@@ -99,9 +99,24 @@
     .map-and-table { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
     #viewDiv { flex: 1; min-height: 0; }
 
+    /* Table tab (folder-style toggle) */
+    .table-tab {
+      position: relative; display: flex; justify-content: center;
+      flex-shrink: 0; z-index: 5;
+    }
+    .table-tab-arrow {
+      display: flex; align-items: center; justify-content: center;
+      width: 48px; height: 20px; background: #0f3460; color: #a0a0b0;
+      border-radius: 6px 6px 0 0; cursor: pointer; font-size: 10px;
+      transition: background 0.15s, color 0.15s; user-select: none;
+      border: 1px solid #2a2a4a; border-bottom: none;
+    }
+    .table-tab-arrow:hover { background: #1a2a5e; color: #e94560; }
+    .table-tab.open .table-tab-arrow { transform: rotate(180deg); }
+
     /* Table - resizable */
-    .table-container { background: #16213e; border-top: 1px solid #0f3460; overflow: hidden; display: flex; flex-direction: column; flex-shrink: 0; height: 220px; min-height: 36px; }
-    .table-container.collapsed { height: 36px !important; }
+    .table-container { background: #16213e; border-top: 1px solid #0f3460; overflow: hidden; display: flex; flex-direction: column; flex-shrink: 0; height: 220px; min-height: 0; }
+    .table-container.collapsed { height: 0 !important; border-top: none; }
     .resize-handle {
       height: 5px; cursor: ns-resize; background: transparent; flex-shrink: 0;
       display: flex; align-items: center; justify-content: center; transition: background 0.15s;
@@ -109,18 +124,24 @@
     .resize-handle:hover, .resize-handle.active { background: #e94560; }
     .resize-handle::after { content: ''; width: 32px; height: 2px; background: #4a4a6a; border-radius: 1px; }
     .resize-handle:hover::after, .resize-handle.active::after { background: #fff; }
-    .table-toggle {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 8px 14px; cursor: pointer; background: #0f3460; font-size: 13px; font-weight: 600; flex-shrink: 0; user-select: none;
+    .table-header {
+      padding: 8px 14px; background: #0f3460; font-size: 13px; font-weight: 600; flex-shrink: 0; user-select: none;
     }
-    .table-toggle:hover { background: #1a2a5e; }
-    .table-toggle .arrow { transition: transform 0.3s; }
-    .table-container.collapsed .arrow { transform: rotate(180deg); }
     .table-scroll { overflow: auto; flex: 1; }
     table { width: 100%; border-collapse: collapse; font-size: 12px; font-family: inherit; }
     thead th { position: sticky; top: 0; background: #16213e; padding: 6px 10px; text-align: left; border-bottom: 1px solid #0f3460; white-space: nowrap; font-weight: 600; }
     tbody td { padding: 5px 10px; border-bottom: 1px solid #1a1a2e; white-space: nowrap; }
     tbody tr:hover { background: #1a2a5e; }
+
+    /* Mobile filter button */
+    .mobile-filter-btn {
+      display: none; position: absolute; top: 8px; left: 8px; z-index: 20;
+      padding: 8px 14px; background: rgba(22,33,62,0.95); color: #e0e0e0;
+      border: 1px solid #2a2a4a; border-radius: 6px; font-size: 13px;
+      font-family: inherit; cursor: pointer; transition: all 0.15s;
+    }
+    .mobile-filter-btn:hover { background: #0f3460; border-color: #e94560; }
+    .mobile-filter-btn.active { background: #e94560; color: #fff; border-color: #e94560; }
 
     /* Legend */
     .legend { position: absolute; bottom: 30px; right: 14px; background: rgba(22,33,62,0.92); border-radius: 8px; padding: 10px 14px; z-index: 10; font-size: 11px; }
@@ -150,6 +171,54 @@
       background: #e94560; color: #fff; border-radius: 10px; padding: 1px 6px;
       font-size: 10px; font-weight: 700;
     }
+
+    /* Mobile responsive */
+    @media (max-width: 768px) {
+      .top-bar { flex-wrap: nowrap; padding: 8px 12px; gap: 10px; }
+      .top-bar h1 { font-size: 13px; flex-shrink: 0; }
+      .indicators { gap: 6px; flex-wrap: nowrap; overflow-x: auto; justify-content: flex-end; }
+      .indicator { min-width: unset; padding: 5px 10px; }
+      .indicator .value { font-size: 14px; }
+      .indicator .label { font-size: 8px; }
+
+      .main-content { flex-direction: column; position: relative; overflow: hidden; }
+
+      .mobile-filter-btn { display: block; top: 8px; left: 8px; }
+
+      .sidebar {
+        position: absolute; top: 0; left: 0; width: 280px; height: 100%;
+        min-width: unset; border-right: 1px solid #0f3460;
+        padding: 48px 12px 12px; z-index: 15;
+        transform: translateX(-100%); transition: transform 0.25s ease;
+        overflow-y: auto;
+      }
+      .sidebar.open { transform: translateX(0); }
+
+      .map-and-table { flex: 1; min-height: 0; }
+      #viewDiv { flex: 1; min-height: 0; }
+
+      .export-toolbar { flex-wrap: wrap; gap: 4px; top: 8px; right: 8px; left: auto; }
+      .export-toolbar button { padding: 5px 8px; font-size: 11px; }
+
+      .legend { bottom: 10px; right: 8px; padding: 8px 10px; font-size: 10px; }
+
+      .table-container.collapsed { height: 0 !important; }
+      .table-container { height: 160px; }
+      table { font-size: 11px; }
+      thead th, tbody td { padding: 4px 6px; }
+    }
+
+    @media (max-width: 480px) {
+      .top-bar h1 { font-size: 13px; }
+      .indicators { gap: 6px; }
+      .indicator { min-width: 75px; padding: 5px 8px; }
+      .indicator .value { font-size: 14px; }
+
+      .sidebar { width: 260px; }
+
+      .export-toolbar { flex-direction: column; gap: 4px; }
+      .export-toolbar button { font-size: 10px; padding: 5px 7px; }
+    }
   </style>
 </head>
 <body>
@@ -166,8 +235,10 @@
     </div>
 
     <div class="main-content">
+      <!-- Mobile filter toggle -->
+      <button class="mobile-filter-btn" id="mobileFilterBtn">&#9776; Filters</button>
       <!-- Sidebar filters -->
-      <div class="sidebar">
+      <div class="sidebar" id="sidebar">
         <div class="filter-group" id="fgState">
           <div class="filter-header"><span>State</span><span class="clear-btn" data-target="filterState">clear</span></div>
           <select id="filterState"><option value="">All</option></select>
@@ -206,17 +277,19 @@
       <div class="map-and-table">
         <div id="viewDiv" style="position:relative;">
           <div class="export-toolbar">
-            <button id="btnSelectCircle" title="Draw polygon to select counties">&#9998; Select Area</button>
+            <button id="btnSelectCircle" title="Lasso select counties">&#9998; Select</button>
             <button id="btnClearSelection" title="Clear selection" disabled>Clear Selection <span class="selection-badge" id="selBadge" style="display:none">0</span></button>
             <button id="btnExportPDF" title="Export filtered data to PDF" disabled>&#128438; Export PDF</button>
           </div>
           <div class="legend" id="legend"></div>
         </div>
-        <div class="table-container" id="tableContainer">
+        <div class="table-tab" id="tableToggle">
+          <span class="table-tab-arrow">&#9650;</span>
+        </div>
+        <div class="table-container collapsed" id="tableContainer">
           <div class="resize-handle" id="resizeHandle"></div>
-          <div class="table-toggle" id="tableToggle">
-            <span>Case Details</span>
-            <span class="arrow">▼</span>
+          <div class="table-header">
+            <span id="tableTitle">Case Details</span>
           </div>
           <div class="table-scroll">
             <table>
@@ -276,12 +349,13 @@
 
       // ── Color ramp (yellow → orange → red) ──
       const BREAKS = [
-        { min: 0,   max: 0,   color: [60, 60, 80, 160],    label: "0 cases",  visible: true },
-        { min: 1,   max: 3,   color: [255, 255, 120, 200], label: "1 – 3",    visible: true },
-        { min: 4,   max: 8,   color: [255, 210, 60, 210],  label: "4 – 8",    visible: true },
-        { min: 9,   max: 15,  color: [255, 160, 30, 220],  label: "9 – 15",   visible: true },
-        { min: 16,  max: 25,  color: [240, 100, 15, 230],  label: "16 – 25",  visible: true },
-        { min: 26,  max: 1e9, color: [200, 20, 20, 240],   label: "26 +",     visible: true }
+        { min: 0,   max: 0,   color: [60, 60, 80, 160],    label: "0 cases",   visible: true },
+        { min: 1,   max: 5,   color: [255, 255, 120, 200], label: "1 – 5",     visible: true },
+        { min: 6,   max: 15,  color: [255, 210, 60, 210],  label: "6 – 15",    visible: true },
+        { min: 16,  max: 40,  color: [255, 160, 30, 220],  label: "16 – 40",   visible: true },
+        { min: 41,  max: 80,  color: [240, 100, 15, 230],  label: "41 – 80",   visible: true },
+        { min: 81,  max: 150, color: [200, 40, 10, 235],   label: "81 – 150",  visible: true },
+        { min: 151, max: 1e9, color: [140, 0, 0, 245],     label: "151 +",     visible: true }
       ];
 
       // ── Helpers ──
@@ -412,7 +486,7 @@
       async function fetchAllFeatures(url, fields, where) {
         const all = [];
         let offset = 0;
-        const pageSize = 2000;
+        const pageSize = 1000;
         where = where || "1=1";
         while (true) {
           const params = `?where=${encodeURIComponent(where)}&outFields=${encodeURIComponent(fields)}&returnGeometry=false&f=json&resultOffset=${offset}&resultRecordCount=${pageSize}`;
@@ -420,8 +494,8 @@
           const data = await resp.json();
           if (!data.features || data.features.length === 0) break;
           all.push(...data.features.map(f => f.attributes));
-          if (data.features.length < pageSize) break;
-          offset += pageSize;
+          if (data.features.length < pageSize && !data.exceededTransferLimit) break;
+          offset += data.features.length;
         }
         // Normalize Bird_Species → Bird_species for internal consistency
         return all.map(r => {
@@ -573,7 +647,7 @@
 
         // Clear county selection when filters change
         selectedCountyKey = null;
-        document.getElementById("tableToggle").querySelector("span").textContent = "Case Details";
+        document.getElementById("tableTitle").textContent = "Case Details";
 
         updateIndicators();
         updateMap();
@@ -666,7 +740,16 @@
 
       // ── Table toggle ──
       document.getElementById("tableToggle").addEventListener("click", () => {
-        document.getElementById("tableContainer").classList.toggle("collapsed");
+        const tc = document.getElementById("tableContainer");
+        tc.classList.toggle("collapsed");
+        document.getElementById("tableToggle").classList.toggle("open", !tc.classList.contains("collapsed"));
+      });
+
+      // ── Mobile filter toggle ──
+      document.getElementById("mobileFilterBtn").addEventListener("click", () => {
+        const sidebar = document.getElementById("sidebar");
+        sidebar.classList.toggle("open");
+        document.getElementById("mobileFilterBtn").classList.toggle("active", sidebar.classList.contains("open"));
       });
 
       // ── County click → filter table ──
@@ -681,20 +764,21 @@
             // Toggle: click same county again to deselect
             if (selectedCountyKey === k) {
               selectedCountyKey = null;
-              document.getElementById("tableToggle").querySelector("span").textContent = "Case Details";
+              document.getElementById("tableTitle").textContent = "Case Details";
             } else {
               selectedCountyKey = k;
-              document.getElementById("tableToggle").querySelector("span").textContent =
+              document.getElementById("tableTitle").textContent =
                 `Case Details — ${g.attributes.NAME}, ${g.attributes.STATE_NAME}`;
               // Expand table if collapsed
               document.getElementById("tableContainer").classList.remove("collapsed");
+              document.getElementById("tableToggle").classList.add("open");
             }
             updateTable();
           } else {
             // Clicked empty area → clear county filter
             if (selectedCountyKey) {
               selectedCountyKey = null;
-              document.getElementById("tableToggle").querySelector("span").textContent = "Case Details";
+              document.getElementById("tableTitle").textContent = "Case Details";
               updateTable();
             }
           }
@@ -786,6 +870,7 @@
 
       // ── Selection & Export ──
       let dragGraphic = null;
+      let lassoPoints = []; // screen coords collected during drag
 
       function setupSelectionTools() {
         selectionGraphicsLayer = new GraphicsLayer();
@@ -795,23 +880,27 @@
         const btnClear = document.getElementById('btnClearSelection');
         const btnExport = document.getElementById('btnExportPDF');
 
-        // The "drag" event is what controls panning in MapView.
-        // stopPropagation() on drag prevents pan and gives us the coordinates.
+        // Lasso: collect points during drag, build freeform polygon
         view.on('drag', (evt) => {
           if (!drawActive) return;
-          evt.stopPropagation(); // THIS prevents panning
+          evt.stopPropagation(); // Prevent panning
 
-          const startMap = view.toMap({ x: evt.origin.x, y: evt.origin.y });
-          const endMap = view.toMap({ x: evt.x, y: evt.y });
-          if (!startMap || !endMap) return;
+          if (evt.action === 'start') {
+            lassoPoints = [{ x: evt.x, y: evt.y }];
+          } else if (evt.action === 'update') {
+            lassoPoints.push({ x: evt.x, y: evt.y });
+          }
 
-          const rings = [[
-            [startMap.x, startMap.y],
-            [endMap.x, startMap.y],
-            [endMap.x, endMap.y],
-            [startMap.x, endMap.y],
-            [startMap.x, startMap.y]
-          ]];
+          // Build polygon from collected screen points
+          if (lassoPoints.length < 2) return;
+          const mapPts = lassoPoints.map(p => {
+            const mp = view.toMap(p);
+            return mp ? [mp.x, mp.y] : null;
+          }).filter(Boolean);
+          if (mapPts.length < 2) return;
+
+          // Close the ring
+          const rings = [[...mapPts, mapPts[0]]];
           const geom = new Polygon({ rings: rings, spatialReference: view.spatialReference });
 
           if (dragGraphic) selectionGraphicsLayer.remove(dragGraphic);
@@ -826,9 +915,11 @@
           selectionGraphicsLayer.add(dragGraphic);
 
           if (evt.action === 'end') {
-            // Remove the drag rectangle
             if (dragGraphic) { selectionGraphicsLayer.remove(dragGraphic); dragGraphic = null; }
-            selectCountiesInGeometry(geom);
+            if (mapPts.length >= 3) {
+              selectCountiesInGeometry(geom);
+            }
+            lassoPoints = [];
             drawActive = false;
             btnDraw.classList.remove('active');
             view.container.style.cursor = 'default';
@@ -841,12 +932,14 @@
             btnDraw.classList.remove('active');
             view.container.style.cursor = 'default';
             if (dragGraphic) { selectionGraphicsLayer.remove(dragGraphic); dragGraphic = null; }
+            lassoPoints = [];
             return;
           }
           drawActive = true;
           btnDraw.classList.add('active');
           selectionGraphicsLayer.removeAll();
           dragGraphic = null;
+          lassoPoints = [];
           view.container.style.cursor = 'crosshair';
         });
 
@@ -855,6 +948,7 @@
           btnDraw.classList.remove('active');
           view.container.style.cursor = 'default';
           dragGraphic = null;
+          lassoPoints = [];
           clearSelection();
         });
         btnExport.addEventListener('click', exportPDF);
@@ -1026,7 +1120,35 @@
           doc.setFont(undefined, 'bold');
           const uniqueSpecies = new Set(exportRecords.map(r => r.Bird_species).filter(Boolean));
           doc.text(`Total Cases: ${exportRecords.length}   |   Species: ${uniqueSpecies.size}   |   Counties: ${selectedCountyKeys.size}`, margin, yPos);
-          yPos += 6;
+          yPos += 8;
+
+          // Cases per species summary
+          const speciesCounts = {};
+          exportRecords.forEach(r => {
+            const sp = r.Bird_species || 'Unknown';
+            speciesCounts[sp] = (speciesCounts[sp] || 0) + 1;
+          });
+          const speciesRows = Object.entries(speciesCounts)
+            .sort((a, b) => b[1] - a[1])
+            .map(([species, count]) => [species, String(count)]);
+
+          doc.setFontSize(10);
+          doc.setFont(undefined, 'bold');
+          doc.text('Cases by Species:', margin, yPos);
+          yPos += 2;
+
+          doc.autoTable({
+            startY: yPos,
+            margin: { left: margin, right: margin },
+            head: [['Species', 'Cases']],
+            body: speciesRows,
+            styles: { fontSize: 8, cellPadding: 1.5 },
+            headStyles: { fillColor: [15, 52, 96], textColor: [255, 255, 255], fontStyle: 'bold' },
+            alternateRowStyles: { fillColor: [240, 240, 248] },
+            columnStyles: { 1: { halign: 'right', cellWidth: 20 } },
+            tableWidth: 100
+          });
+          yPos = doc.lastAutoTable.finalY + 6;
 
           // Map image
           const mapAspect = screenshot.data.width / screenshot.data.height;
@@ -1133,6 +1255,7 @@
           });
 
           await view.when();
+          view.ui.move("zoom", "bottom-left");
           buildLegend();
           setupMapClick();
           setupSelectionTools();
